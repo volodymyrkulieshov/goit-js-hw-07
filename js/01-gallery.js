@@ -32,9 +32,24 @@ function handlerClick(evt) {
   evt.preventDefault();
   const currentImage = evt.target.dataset.source;
   console.dir(currentImage);
-  const instance = basicLightbox.create(`
-    <img src="${currentImage}" width="800" height="600">
-`);
+  const instance = basicLightbox.create(
+    `
+    <img src="${currentImage}" width="800" height="600">`,
 
-  instance.show();
+    //   instance.show(() => console.log("lightbox now visible"));
+
+    {
+      onShow: () => {
+        window.addEventListener("keydown", closeOnEscClick);
+      },
+      onClose: () => {
+        window.removeEventListener("keydown", closeOnEscClick);
+      },
+    }
+  );
+  if (evt.target !== evt.currentTarget) instance.show();
+
+  function closeOnEscClick(evt) {
+    if (evt.code === "Escape") instance.close();
+  }
 }
